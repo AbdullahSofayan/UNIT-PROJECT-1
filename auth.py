@@ -17,11 +17,6 @@ def is_valid_email(email):
 
 def register_user():
     print("\n--- Register ---")
-    role = input("Enter role (admin/customer): ").lower()
-    if role != "admin" and role != "customer":
-        print("Please enter either 'admin' or 'customer'.")
-        return None
-
     username = input("Enter username: ")
     if user_exists(username):
         print("This username already exists. Try another.")
@@ -40,7 +35,7 @@ def register_user():
         "password": password,
         "name": name,
         "email": email,
-        "role": role
+        "role": "user"
     }
 
     users = load_users()
@@ -48,13 +43,30 @@ def register_user():
     save_users(users)
     return new_user
 
-def login_user():
-    while True:
-        username = input("Username: ")
-        if not user_exists(username):
-            print("Username not Exist.\n")
-            continue
 
+def is_admin(username):
+    users = load_users()
+    for user in users:
+        if user['username'] == username:
+            return user.get("role") == "admin"
+    return False
+
+
+
+
+def login_user(): 
+
+    while True:
+        role = input("Enter role (admin/user): ").lower()
+        if role != "admin" and role != "user":
+            print("Please enter either 'admin' or 'user'.")
+            return None
+        username = input("Username: ")
+        
+        if (not user_exists(username)) or (role == "admin" and not is_admin(username)) or (role == "user" and is_admin(username)) :
+            print("Username not Exist.\n")
+            continue      
+        
         else:
             password = input("Password: ")
             for user in load_users():
@@ -62,5 +74,6 @@ def login_user():
                     return user
             print("Login failed.")
             break
+            
   
         

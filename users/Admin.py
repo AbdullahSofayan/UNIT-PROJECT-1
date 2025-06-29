@@ -2,7 +2,7 @@
 from users.user import User
 from movies_db import save_movies
 class Admin (User):
-    def __init__(self, username, password, name, role):
+    def __init__(self, username, password, name):
         super().__init__(username, password, name, role = "admin")
     
     def add_movies(self, movie, movie_list):

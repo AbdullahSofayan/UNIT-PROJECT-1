@@ -2,7 +2,7 @@ from colorama import Fore, Style
 from art import tprint
 from movie import Movie
 from movies_db import load_movies
-from users.Customer import Customer
+from users.user import User
 from auth import register_user, login_user
 def welcome_screen():
     tprint("MovieMate")
@@ -27,8 +27,8 @@ def main_menu():
             user = login_user()
             if user:
                 print(f"Welcome back, {user['name']}! Logged in as {user['role']}.")
-                if user['role'] == 'customer':
-                    customer_menu(Customer(user['username'], user['password'], user['name']))
+                if user['role'] == 'user':
+                    customer_menu(User(user['username'], user['password'], user['name']))
                 break
         elif choice == "3":
             print("Goodbye!")
@@ -42,26 +42,31 @@ def display_movies(movies):
     for movie in movies:
         print(f"🎞️  Title: {movie.title}")
         print(f"📚 Genre: {movie.genre}")
-        print(f"⏱ Duration: {movie._duration} minutes")
+        print(f"⏱ Duration: {movie.duration} minutes")
         print(f"🔞 Age: {movie.age_classification}+")
         print(f"📺 Where to Watch: {movie.where_to_watch}")
         print(f"📆 Production Date: {movie.production_date}")
         print("-" * 40)
 
-def customer_menu(customer):
+def customer_menu(user):
     movies = load_movies()
     while True:
+        
         print("\n--- Customer Menu ---")
-        print("1. Browse all movies")
-        print("2. Search by genre")
-        print("3. Show movie details")
-        print("4. Add to watchlist")
-        print("5. Remove from watchlist")
-        print("6. View watchlist")
-        print("7. Mark as watched")
-        print("8. Rate a movie")
-        print("9. Get movie recommendations")
-        print("10. Plan a movie night")
+        print("1. Browse all movies") # ask if he want to add to watchlist *
+        print("2. Search for movie") # and search by genre , ask if he want to add to watchlist
+
+        # print("2. Search by genre")
+        # print("3. Show movie details")
+
+        print("3. View watchlist") #and ask him if he want to mark some movie, or remove it from watchlist, when movie is marked ask the user about rating
+
+        # print("4. Add to watchlist")
+        # print("5. Remove from watchlist")
+        # print("7. Mark as watched")
+        print("4. Rate a movie")
+        print("5. Get movie recommendations")
+        print("6. Plan a movie night")
         print("0. Logout")
         
         choice = input("Choose an option: ")
@@ -69,6 +74,20 @@ def customer_menu(customer):
         match choice:
             case '1':
                 display_movies(movies)
+                chice = input("Do you want to add a movie to your watchlist ? (y / n): ")
+                if chice == 'y':
+                    title = input("Write the title of the movie: ")
+                    movie = user.find_movie_by_title(title)
+                    if movie:
+                        user.add_to_watchlist(movie)
+                    else:
+                        print("movie title is wrong")
+                input("\nPress Enter to back to menu..")
+            case '2':
+                pass
+            case '3':
+                print()
+                user.view_watchlist()
 
             case '0':
                 print("Logging out...")
@@ -76,11 +95,7 @@ def customer_menu(customer):
             case _:
                 print("Invalid choice")
 
-        # if choice == "0":
-        #     print("Logging out...")
-        #     break
-        # else:
-        #     print("(Feature not implemented yet)")
+        
 
 
 
