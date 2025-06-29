@@ -2,8 +2,8 @@
 from users.user import User
 from movies_db import save_movies
 class Admin (User):
-    def __init__(self, username, password, name, age, role):
-        super().__init__(username, password, name, age, role = "admin")
+    def __init__(self, username, password, name, role):
+        super().__init__(username, password, name, role = "admin")
     
     def add_movies(self, movie, movie_list):
         movie_list.append(movie)

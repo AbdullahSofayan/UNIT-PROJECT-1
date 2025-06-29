@@ -12,5 +12,19 @@
     "name": "ahmed",
     "email": "ahmed@gmail.com",
     "role": "customer"
+  },
+  {
+    "username": "abdul",
+    "password": "155",
+    "name": "abdullah",
+    "email": "dd@gmail.com",
+    "role": "admin"
+  },
+  {
+    "username": "lal",
+    "password": "44",
+    "name": "j",
+    "email": "adjfhak@gmmg.com",
+    "role": "admin"
   }
 ]

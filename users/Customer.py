@@ -1,11 +1,12 @@
+from typing import Counter
 from users.user import User
 from movie import Movie
 from datetime import datetime, timedelta
 class Customer(User):
 
 
-    def __init__(self, username, password, name,age):
-        super().__init__(username, password, name,age, role = "costumer")
+    def __init__(self, username, password, name):
+        super().__init__(username, password, name, role = "costumer")
         self.watch_list = []
         self.watched_movies = []
         self.rated_movies = [] #To prevent rating the same movie more than one
@@ -67,5 +68,24 @@ class Customer(User):
     # def search_by_genre(self, movie_list, genre):
     #     return [m for m in movie_list if genre.lower() in m.genre.lower()]
 
+def get_recommendation(self, movie_list):
+        if not self.watched_movies:
+            return "❗ No watched movies found. Watch some movies to get recommendations."
 
+        # Count watched genres
+        genre_counts = Counter(m.genre.lower() for m in self.watched_movies)
+        most_common = genre_counts.most_common(1)
+
+        if not most_common:
+            return "❗ No genre preferences found."
+
+        top_genre = most_common[0][0]
+        # Recommend movies of that genre not already watched
+        recommendations = [m for m in movie_list if m.genre.lower() == top_genre and m not in self.watched_movies]
+
+        if recommendations:
+            return f"🎯 Based on your watched history, we recommend these {top_genre.title()} movies:\n" + \
+                "\n".join(f"- {m.title}" for m in recommendations)
+        else:
+            return f"🎯 You have watched all movies in your favorite genre: {top_genre.title()}!"
     

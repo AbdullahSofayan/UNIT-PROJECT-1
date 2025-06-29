@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from art import tprint
 from movie import Movie
+from movies_db import load_movies
 from users.Customer import Customer
 from auth import register_user, login_user
 def welcome_screen():
@@ -26,12 +27,69 @@ def main_menu():
             user = login_user()
             if user:
                 print(f"Welcome back, {user['name']}! Logged in as {user['role']}.")
-                break  # This can be replaced with role-specific menu in future
+                if user['role'] == 'customer':
+                    customer_menu(Customer(user['username'], user['password'], user['name']))
+                break
         elif choice == "3":
             print("Goodbye!")
             break
         else:
             print("Invalid option. Please try again.")
+
+def display_movies(movies):
+    print("\n🎬 Available Movies:")
+    print("-" * 40)
+    for movie in movies:
+        print(f"🎞️  Title: {movie.title}")
+        print(f"📚 Genre: {movie.genre}")
+        print(f"⏱ Duration: {movie._duration} minutes")
+        print(f"🔞 Age: {movie.age_classification}+")
+        print(f"📺 Where to Watch: {movie.where_to_watch}")
+        print(f"📆 Production Date: {movie.production_date}")
+        print("-" * 40)
+
+def customer_menu(customer):
+    movies = load_movies()
+    while True:
+        print("\n--- Customer Menu ---")
+        print("1. Browse all movies")
+        print("2. Search by genre")
+        print("3. Show movie details")
+        print("4. Add to watchlist")
+        print("5. Remove from watchlist")
+        print("6. View watchlist")
+        print("7. Mark as watched")
+        print("8. Rate a movie")
+        print("9. Get movie recommendations")
+        print("10. Plan a movie night")
+        print("0. Logout")
+        
+        choice = input("Choose an option: ")
+
+        match choice:
+            case '1':
+                display_movies(movies)
+
+            case '0':
+                print("Logging out...")
+                break
+            case _:
+                print("Invalid choice")
+
+        # if choice == "0":
+        #     print("Logging out...")
+        #     break
+        # else:
+        #     print("(Feature not implemented yet)")
+
+
+
+
+
+
+
+
+
 
 welcome_screen()
 main_menu()

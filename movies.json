@@ -1,1 +1,74 @@
-[]
+[ 
+  {
+    "title": "Inception",
+    "genre": "Sci-Fi",
+    "duration": 148,
+    "age_classification": 13,
+    "where_to_watch": "Netflix",
+    "production_date": "2010-07-16"
+  },
+  {
+    "title": "The Lion King",  
+    "genre": "Animation",
+    "duration": 88,
+    "age_classification": 6,
+    "where_to_watch": "Disney+",
+    "production_date": "1994-06-15"
+  },
+  {
+    "title": "Avengers: Endgame",
+    "genre": "Action",
+    "duration": 181,
+    "age_classification": 13,
+    "where_to_watch": "Disney+",
+    "production_date": "2019-04-26"
+  },
+  {
+    "title": "The Godfather",
+    "genre": "Crime",
+    "duration": 175,
+    "age_classification": 18,
+    "where_to_watch": "Amazon Prime",
+    "production_date": "1972-03-24"
+  },
+  {
+    "title": "La La Land",
+    "genre": "Romance",
+    "duration": 128,
+    "age_classification": 12,
+    "where_to_watch": "Netflix",
+    "production_date": "2016-12-09"
+  },
+  {
+    "title": "Interstellar",
+    "genre": "Sci-Fi",
+    "duration": 169,
+    "age_classification": 13,
+    "where_to_watch": "HBO Max",
+    "production_date": "2014-11-07"
+  },
+  {
+    "title": "Joker",
+    "genre": "Drama",
+    "duration": 122,
+    "age_classification": 18,
+    "where_to_watch": "HBO Max",
+    "production_date": "2019-10-04"
+  },
+  {
+  "title": "John Wick",
+  "genre": "Action",
+  "duration": 101,
+  "age_classification": 18,
+  "where_to_watch": "Amazon Prime",
+  "production_date": "2014-10-24"
+},
+{
+  "title": "Mad Max: Fury Road",
+  "genre": "Action",
+  "duration": 120,
+  "age_classification": 16,
+  "where_to_watch": "HBO Max",
+  "production_date": "2015-05-15"
+}
+]
