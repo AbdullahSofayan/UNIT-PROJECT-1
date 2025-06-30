@@ -5,7 +5,10 @@
     "name": "abdullah",
     "email": "abood@gmail.com",
     "role": "user",
-    "watch_list": []
+    "watch_list": [
+      "Joker",
+      "John Wick"
+    ]
   },
   {
     "username": "ahmed11",
@@ -18,7 +21,8 @@
       "La La Land",
       "John Wick",
       "Inception",
-      "The Godfather"
+      "The Godfather",
+      "Mad Max: Fury Road"
     ]
   },
   {
