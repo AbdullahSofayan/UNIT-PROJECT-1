@@ -4,6 +4,7 @@ from movie import Movie
 from movies_db import load_movies
 from users.user import User
 from auth import register_user, login_user
+
 def welcome_screen():
     tprint("MovieMate")
     print(Fore.CYAN + Style.BRIGHT + "-" * 40)
@@ -60,6 +61,8 @@ def to_watchlist(user):
                 if movie:
                     if user.is_exist_in_watchlist(movie):
                         print(f"❗ {movie.title} is already in your watchlist.")
+                    elif user.is_exist_in_watched_movies(movie):
+                        print(f"❗ {movie.title} is already marked as watched.")
                     else:
                         user.add_to_watchlist(movie)
                         print(f"✅ {movie.title} added to your watchlist.")
@@ -84,6 +87,8 @@ def ask_watchlist(user, title):
         if movie:
             if user.is_exist_in_watchlist(movie):
                 print(f"❗ {movie.title} is already in your watchlist.")
+            elif user.is_exist_in_watched_movies(movie):
+                print(f"❗ {movie.title} is already marked as watched.")
             else:
                 user.add_to_watchlist(movie)
                 print(f"✅ {movie.title} added to your watchlist.")
@@ -94,24 +99,63 @@ def ask_watchlist(user, title):
         pass
     user.save_watch_list()
 
+def mark_movie(user):
+    while True:
+        
+        title = input("Enter the title of the movie to mark as watched, or type back: ").lower()
+        if title == 'back':
+            break
+        movie = user.find_movie_by_title(title)
+
+        if movie:
+            if user.is_exist_in_watched_movies(movie):
+                print(f"❗ {movie.title} is already marked as watched.")
+            elif not user.is_exist_in_watchlist(movie):
+                print(f"❌ {movie.title} is not in your watchlist.")
+            
+            elif user.mark_as_watched(movie):
+                print(f"✅ {movie.title} marked as watched.")
+                user.save_watch_list()
+                user.save_watched_movies()
+                break
+                
+        else:
+            print("❌ Movie title is wrong.")
+
+def delete_movie(user):
+    while True:
+        
+        title = input("Enter the title of the movie to remove from watchlist, or type back: ").lower()
+        if title == 'back':
+            break
+        movie = user.find_movie_by_title(title)
+
+        if movie:
+            if user.remove_from_watchlist(movie):
+                print(f"✅ {movie.title} removed.")
+                user.save_watch_list()
+                user.save_watched_movies()
+                break
+            else:
+                print(f"❌ {movie.title} is not in your watchlist.")            
+                
+        else:
+            print("❌ Movie title is wrong.")
+        
+
+
 
 def customer_menu(user):
     user.load_watch_list()
     movies = load_movies()
+    user.load_watched_movies()
     while True:
         
-        print("\n--- Customer Menu ---")
+        print("\n--- User Menu ---")
         print("1. Browse all movies") # ask if he want to add to watchlist *
-        print("2. Search for movie") # and search by genre , ask if he want to add to watchlist
-
-        # print("2. Search by genre")
-        # print("3. Show movie details")
-
-        print("3. View watchlist") #and ask him if he want to mark some movie, or remove it from watchlist, when movie is marked ask the user about rating
-
-        print("4. Add to watchlist") # display movies
-        # print("5. Remove from watchlist")
-        # print("7. Mark as watched")
+        print("2. Search for movie") # and search by genre , ask if he want to add to watchlist *
+        print("3. View watchlist") #and ask him if he want to mark some movie, or remove it from watchlist * , when movie is marked ask the user about rating
+        print("4.view watched movies") # ask if he wants to remove the mark
         print("5. Rate a movie")
         print("6. Get movie recommendations")
         print("7. Plan a movie night")
@@ -169,7 +213,25 @@ def customer_menu(user):
 
             case '3':
                 print()
-                user.view_watchlist()
+                if user.view_watchlist():
+                    while True:
+                        option = input("\n1- Mark a movie as watched\t2- Remove a movie from watchlist\t3- back to menu\nchoose of the above: ")
+                        if option == '1':
+                            mark_movie(user)
+                            user.view_watchlist()
+                        elif option == '2':
+                            delete_movie(user)
+                            user.view_watchlist()
+                        elif option == '3':
+                            break
+                        else:
+                            print("invalid choice")
+
+                    
+                    
+
+                    
+
 
             case '0':
                 print("Logging out...")

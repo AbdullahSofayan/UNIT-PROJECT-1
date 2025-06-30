@@ -1,1 +1,1 @@
-register_user
+view_watchlist

@@ -8,6 +8,10 @@
     "watch_list": [
       "Joker",
       "John Wick"
+    ],
+    "watched_movies": [
+      "Joker",
+      "John Wick"
     ]
   },
   {
@@ -16,13 +20,10 @@
     "name": "ahmed",
     "email": "ahmed@gmail.com",
     "role": "user",
-    "watch_list": [
-      "Joker",
-      "La La Land",
-      "John Wick",
-      "Inception",
+    "watch_list": [],
+    "watched_movies": [
       "The Godfather",
-      "Mad Max: Fury Road"
+      "Fury Road"
     ]
   },
   {
@@ -31,7 +32,8 @@
     "name": "abdullah",
     "email": "dd@gmail.com",
     "role": "admin",
-    "watch_list": []
+    "watch_list": [],
+    "watched_movies": []
   },
   {
     "username": "lal",
@@ -39,7 +41,8 @@
     "name": "j",
     "email": "adjfhak@gmmg.com",
     "role": "admin",
-    "watch_list": []
+    "watch_list": [],
+    "watched_movies": []
   },
   {
     "username": "khalid",
@@ -47,7 +50,14 @@
     "name": "khalid",
     "email": "khalid@hotmail.com",
     "role": "user",
-    "watch_list": []
+    "watch_list": [],
+    "watched_movies": [
+      "Joker",
+      "Endgame",
+      "Inception",
+      "Fury Road",
+      "Interstellar"
+    ]
   },
   {
     "username": "walled",
@@ -55,7 +65,8 @@
     "name": "waleed",
     "email": "ww@gmail.com",
     "role": "user",
-    "watch_list": []
+    "watch_list": [],
+    "watched_movies": []
   },
   {
     "username": "lolo",
@@ -63,7 +74,8 @@
     "name": "loloah",
     "email": "loloah@gmail.com",
     "role": "user",
-    "watch_list": []
+    "watch_list": [],
+    "watched_movies": []
   },
   {
     "username": "kal",
@@ -73,6 +85,7 @@
     "role": "user",
     "watch_list": [
       "Joker"
-    ]
+    ],
+    "watched_movies": []
   }
 ]

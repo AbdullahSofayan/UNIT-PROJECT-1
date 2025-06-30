@@ -29,6 +29,9 @@ class User:
             
 
     def view_watchlist(self):
+        if not self.watch_list:
+            print("📭 Your watchlist is currently empty.")
+            return False
         print("-" * 40)
         for movie in self.watch_list:
             print(f"🎞️  Title: {movie.title}")
@@ -38,23 +41,25 @@ class User:
             print(f"📺 Where to Watch: {movie.where_to_watch}")
             print(f"📆 Production Date: {movie.production_date}")
             print("-" * 40)
+            
+        return True
 
 
 
 
     def remove_from_watchlist(self, movie): #return bool
-        if movie in self.watchlist:
-            self.watch_list.remove(movie)
-            return True
-        
+        for m in self.watch_list:
+            if m.title.lower() == movie.title.lower():
+                self.watch_list.remove(m)
+                return True
         return False
     
-    def  mark_as_watched(self, movie): #return bool
-        if movie in self.watch_list:
-            self.watch_list.remove(movie)
-            self.watched_movies.append(movie)
-            return True
-        
+    def mark_as_watched(self, movie):  # return bool
+        for m in self.watch_list:
+            if m.title.lower() == movie.title.lower():
+                self.watch_list.remove(m)
+                self.watched_movies.append(m)
+                return True
         return False
     
     
@@ -66,26 +71,28 @@ class User:
             return True
         return False
     
-    def get_recommendation(self, movie_list):
-        if not self.watched_movies:
-            return "❗ No watched movies found. Watch some movies to get recommendations."
 
-        # Count watched genres
-        genre_counts = Counter(m.genre.lower() for m in self.watched_movies)
-        most_common = genre_counts.most_common(1)
+    # not sure yet
+    # def get_recommendation(self, movie_list): 
+    #     if not self.watched_movies:
+    #         return "❗ No watched movies found. Watch some movies to get recommendations."
 
-        if not most_common:
-            return "❗ No genre preferences found."
+    #     # Count watched genres
+    #     genre_counts = Counter(m.genre.lower() for m in self.watched_movies)
+    #     most_common = genre_counts.most_common(1)
 
-        top_genre = most_common[0][0]
-        # Recommend movies of that genre not already watched
-        recommendations = [m for m in movie_list if m.genre.lower() == top_genre and m not in self.watched_movies]
+    #     if not most_common:
+    #         return "❗ No genre preferences found."
 
-        if recommendations:
-            return f"🎯 Based on your watched history, we recommend these {top_genre.title()} movies:\n" + \
-                "\n".join(f"- {m.title}" for m in recommendations)
-        else:
-            return f"🎯 You have watched all movies in your favorite genre: {top_genre.title()}!"
+    #     top_genre = most_common[0][0]
+    #     # Recommend movies of that genre not already watched
+    #     recommendations = [m for m in movie_list if m.genre.lower() == top_genre and m not in self.watched_movies]
+
+    #     if recommendations:
+    #         return f"🎯 Based on your watched history, we recommend these {top_genre.title()} movies:\n" + \
+    #             "\n".join(f"- {m.title}" for m in recommendations)
+    #     else:
+    #         return f"🎯 You have watched all movies in your favorite genre: {top_genre.title()}!"
 
     
     def save_watch_list(self):
@@ -93,10 +100,7 @@ class User:
 
         for user in users:
             if user["username"] == self.username:
-                existing_movies = user.get("watch_list", [])
-
-                new_movies = [m.title for m in self.watch_list if m.title not in existing_movies]
-                user["watch_list"] = existing_movies + new_movies
+                user["watch_list"] = [m.title for m in self.watch_list]
                 
                 break
 
@@ -114,3 +118,31 @@ class User:
                 saved_titles = user.get("watch_list", [])
                 self.watch_list = [m for m in all_movies if m.title in saved_titles]
                 break
+
+
+    def save_watched_movies(self):
+        users = load_json("users.json")
+
+        for user in users:
+            if user["username"] == self.username:
+                existing_movies = user.get("watched_movies", [])
+
+                new_movies = [m.title for m in self.watched_movies if m.title not in existing_movies]
+                user["watched_movies"] = existing_movies + new_movies
+                
+                break
+
+        save_json("users.json", users)
+
+    def load_watched_movies(self):
+        all_movies = load_movies()  
+        users = load_json("users.json")
+
+        for user in users:
+            if user["username"] == self.username:
+                saved_titles = user.get("watched_movies", [])
+                self.watched_movies = [m for m in all_movies if m.title in saved_titles]
+                break
+
+    def is_exist_in_watched_movies(self, movie):
+        return any(m.title == movie.title for m in self.watched_movies)
