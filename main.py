@@ -49,6 +49,7 @@ def display_movies(movies):
         print("-" * 40)
 
 def customer_menu(user):
+    user.load_watch_list()
     movies = load_movies()
     while True:
         
@@ -61,12 +62,12 @@ def customer_menu(user):
 
         print("3. View watchlist") #and ask him if he want to mark some movie, or remove it from watchlist, when movie is marked ask the user about rating
 
-        # print("4. Add to watchlist")
+        print("4. Add to watchlist") # display movies
         # print("5. Remove from watchlist")
         # print("7. Mark as watched")
-        print("4. Rate a movie")
-        print("5. Get movie recommendations")
-        print("6. Plan a movie night")
+        print("5. Rate a movie")
+        print("6. Get movie recommendations")
+        print("7. Plan a movie night")
         print("0. Logout")
         
         choice = input("Choose an option: ")
@@ -74,14 +75,30 @@ def customer_menu(user):
         match choice:
             case '1':
                 display_movies(movies)
-                chice = input("Do you want to add a movie to your watchlist ? (y / n): ")
-                if chice == 'y':
-                    title = input("Write the title of the movie: ")
-                    movie = user.find_movie_by_title(title)
-                    if movie:
-                        user.add_to_watchlist(movie)
+                chice = input("Do you want to add a movie to your watchlist ? (yes / no): ")
+                while True:
+                    if chice == 'yes':
+                        title = input("Write the title of the movie, or type stop : ").lower()
+                        while title != "stop":
+                            movie = user.find_movie_by_title(title)
+                            if movie:
+                                if user.is_exist_in_watchlist(movie):
+                                    print(f"❗ {movie.title} is already in your watchlist.")
+                                else:
+                                    user.add_to_watchlist(movie)
+                                    print(f"✅ {movie.title} added to your watchlist.")
+                            else:
+                                print("❌ Movie title is wrong.")
+                            
+
+                            title = input("Write the title of the movie, or type stop : ").lower()
+                        user.save_watch_list()
+                        break
+                    elif chice == 'no':
+                        break
                     else:
-                        print("movie title is wrong")
+                        print("invalid choice")
+                        chice = input("Do you want to add a movie to your watchlist ? (yes / no): ")
                 input("\nPress Enter to back to menu..")
             case '2':
                 pass

@@ -1,7 +1,7 @@
 from typing import Counter
 from movie import Movie
 from datetime import datetime, timedelta
-
+from utils.file_handler import save_json, load_json
 from movies_db import load_movies
 
 class User:
@@ -88,6 +88,29 @@ class User:
             return f"🎯 You have watched all movies in your favorite genre: {top_genre.title()}!"
 
     
+    def save_watch_list(self):
+        users = load_json("users.json")
 
+        for user in users:
+            if user["username"] == self.username:
+                existing_movies = user.get("watch_list", [])
 
+                new_movies = [m.title for m in self.watch_list if m.title not in existing_movies]
+                user["watch_list"] = existing_movies + new_movies
+                
+                break
+
+        save_json("users.json", users)
+
+    def is_exist_in_watchlist(self, movie):
+        return any(m.title == movie.title for m in self.watch_list)
     
+    def load_watch_list(self):
+        all_movies = load_movies()  
+        users = load_json("users.json")
+
+        for user in users:
+            if user["username"] == self.username:
+                saved_titles = user.get("watch_list", [])
+                self.watch_list = [m for m in all_movies if m.title in saved_titles]
+                break
