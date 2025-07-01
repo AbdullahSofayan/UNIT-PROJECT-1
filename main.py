@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 from art import tprint
+from users.Admin import Admin
 from movie import Movie
 from movies_db import load_movies
 from users.user import User
@@ -30,7 +31,9 @@ def main_menu():
             if user:
                 print(f"Welcome back, {user['name']}! Logged in as {user['role']}.")
                 if user['role'] == 'user':
-                    customer_menu(User(user['username'], user['password'], user['name']))
+                    user_menu(User(user['username'], user['password'], user['name']))
+                elif user['role'] == 'admin':
+                    admin_menu(Admin(user['username'], user['password'], user['name']))
                 break
         elif choice == "3":
             print("Goodbye!")
@@ -38,17 +41,7 @@ def main_menu():
         else:
             print("Invalid option. Please try again.")
 
-def display_movies(movies):
-    print("\n🎬 Available Movies:")
-    print("-" * 40)
-    for movie in movies:
-        print(f"🎞️  Title: {movie.title}")
-        print(f"📚 Genre: {movie.genre}")
-        print(f"⏱ Duration: {movie.duration} minutes")
-        print(f"🔞 Age: {movie.age_classification}+")
-        print(f"📺 Where to Watch: {movie.where_to_watch}")
-        print(f"📆 Production Date: {movie.production_date}")
-        print("-" * 40)
+
 
 
 def to_watchlist(user):
@@ -116,13 +109,18 @@ def mark_movie(user):
                 print(f"✅ {movie.title} marked as watched.")
                 user.save_watch_list()
                 user.save_watched_movies()
-                
-                # ask about rating
-                rate = input(f"⭐ Do you want to rate '{movie.title}'? (yes / no): ").lower()
+                while True:
+                    # ask about rating
+                    rate = input(f"⭐ Do you want to rate '{movie.title}'? (yes / no): ").lower()
 
-                if rate == 'yes':
-                    rate_movie(user,movie)
-
+                    if rate == 'yes':
+                        try:
+                            rate_movie(user,movie)
+                            break
+                        except Exception as e:
+                            print(e)
+                            continue
+                        
 
 
                 break
@@ -139,7 +137,7 @@ def rate_movie(user, movie):
             else:
                 print("❌ You have already rated this movie.")
         else:
-            print("⚠️ Rating must be between 1 and 10.")
+            raise Exception("⚠️ Rating must be between 1 and 10.")
         
 
     except ValueError:
@@ -170,7 +168,7 @@ def delete_movie(user, list):
 
 
 
-def customer_menu(user):
+def user_menu(user):
     user.load_watch_list()
     movies = load_movies()
     user.load_watched_movies()
@@ -190,9 +188,10 @@ def customer_menu(user):
 
         match choice:
             case '1':
-                display_movies(movies)
+                # movie.display_movie()
+                Movie.display_movies_table(movies)
                 to_watchlist(user)
-                input("\nPress Enter to back to menu..")
+                print()
             case '2':
                 print("\n1-Search by name\n2- Search by genre\n3- To back to menu\n")
                 sub_choice  = input("Choose an option: ")
@@ -202,29 +201,34 @@ def customer_menu(user):
                         if search == 'back':
                             pass
                         else:
-                            found = False
-
-                            for movie in movies : 
-                                if search in movie.title.lower():
-                                    movie.display_movie()
-                                    found = True
-                            if not found:
+                            # Filter matching movies
+                            matched_movies = [movie for movie in movies if search in movie.title.lower()]
+                            
+                            if matched_movies:
+                                Movie.display_movies_table(matched_movies)
+                                ask_watchlist(user, search)
+                            else:
                                 print("❌ No movies found matching your search.")
 
-                            ask_watchlist(user,search)
                     elif sub_choice  == '2':
-                        search = input("🔍 Enter a movie genre to search, or type back: ").lower()
+                        print("🎭 Available genres:")
+                        all_genres = sorted(set(movie.genre for movie in movies))
+                        for genre in all_genres:
+                            print(f"- {genre}")
+
+                        search = input("\n🔍 Enter a movie genre to search, or type back: ").lower()
                         if search == 'back':
                             pass
                         else:
-                            found = False
-                            for movie in movies : 
-                                if search in movie.genre.lower():
-                                    movie.display_movie()
-                                    found = True
-                            if not found:
-                                print("❌ No movies found matching your search.")
-                        to_watchlist(user)
+                            matched_movies = [movie for movie in movies if search in movie.genre.lower()]
+                            
+                            if matched_movies:
+                                Movie.display_movies_table(matched_movies)
+                                to_watchlist(user)
+                            else:
+                                print("❌ No movies found in that genre.")
+
+
                     elif sub_choice  == '3':
                         break
                     else:
@@ -258,22 +262,27 @@ def customer_menu(user):
                     while True:
                         option = input("\n1- Rate a movie\t2- Remove the mark as watched from a movie\t3- back to menu\nchoose of the above: ")
                         if option == '1':
-                            title = input("⭐ Type the movie title to rate, or type back: ")
-                            if title == 'back':
-                                continue
-                            movie = user.find_movie_by_title(title)
-                            if movie:
-                                if not user.is_exist_in_watched_movies(movie):
-                                    print(f"❗ {movie.title} is not marked as watched.")
+                            while True:
+                                title = input("\n⭐ Type the movie title to rate, or type back: ")
+                                if title == 'back':
+                                    break
+                                movie = user.find_movie_by_title(title)
+                                if movie:
+                                    if not user.is_exist_in_watched_movies(movie):
+                                        print(f"❗ {movie.title} is not marked as watched.")
+                                    else:
+                                        try:
+                                            rate_movie(user,movie)
+                                        except Exception as e:
+                                            print(e)
+                                            continue
+                                        # Reload updated movies and watched list
+                                        movies = load_movies()
+                                        user.load_watched_movies()
+                                        user.view_watched_movies()
+                                        break
                                 else:
-                                    rate_movie(user,movie)
-                                    # Reload updated movies and watched list
-                                    movies = load_movies()
-                                    user.load_watched_movies()
-                                    user.view_watched_movies()
-                                    continue
-                            else:
-                                print("❌ No movies found matching your search.")
+                                    print("❌ No movies found matching your search.")
                         elif option == '2':
                             delete_movie(user, user.watched_movies)
                             user.view_watched_movies()
@@ -282,10 +291,36 @@ def customer_menu(user):
                         else:
                             print("Invalid choice")
 
+            case '5':
+                while True:
+                    title = input("\n⭐️ Type the movie title to rate, or type back: ")
+                    if title == 'back':
+                        break
+                    movie = user.find_movie_by_title(title)
+                    if movie:
+                        if not user.is_exist_in_watched_movies(movie):
+                            print(f"❗️ {movie.title} is not marked as watched.")
+                        else:
+                            try:
+                                rate_movie(user,movie)
+                            except Exception as e:
+                                print(e)
+                                continue
+                            # Reload updated movies and watched list
+                            movies = load_movies()
+                            user.load_watched_movies()
+                            user.view_watched_movies()
+                            break
+                    else:
+                        print("❌ No movies found matching your search.")
 
+            case '6':
+                msg = user.get_recommendation()
+                if msg:
+                    print(msg)
 
-                    
-
+            case '7':
+                user.plan_movie_night()
 
             case '0':
                 print("Logging out...")
@@ -299,6 +334,80 @@ def customer_menu(user):
 
 
 
+def admin_menu(admin: Admin):
+    movies = load_movies()
+    
+    while True:
+        print("\n🎬 Admin Menu:")
+        print("1. Add Movie")
+        print("2. Remove Movie")
+        print("3. View All Movies")
+        print("0. Logout")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == "1":
+                while True:
+                    title = input("\nEnter movie title: ").strip()
+                    if Movie.is_duplicate_title(title, movies):
+                        print("❌ A movie with that title already exists.")
+                        continue
+                    break
+                        
+                genres = Movie.available_genres(movies)
+                while True:
+                    print(f"\nAvailable genres: {', '.join(genres)}")
+                    genre = input("Enter genre: ").strip().lower()
+                    if not Movie.is_valid_genre(genre, movies):
+                        print("❌ Invalid genre. Please choose from existing genres.")
+                        continue
+
+                    # Get the genre from the movie list with original casing
+                    genre = next((m.genre for m in movies if m.genre.lower() == genre), genre)
+                    break
+                while True:
+                    duration = Movie.input_duration()
+                    if duration is None:
+                        continue
+                    break
+
+                while True:
+                    age_classification = Movie.input_age_classification()
+                    if age_classification is None:
+                        continue
+                    break
+
+                print()
+                where_to_watch = input("Where to watch: ").strip()
+
+                while True:
+                    production_date = Movie.input_production_date()
+                    if production_date is None:
+                        continue
+                    break
+
+                new_movie = Movie(
+                    title, genre, duration, age_classification,
+                    where_to_watch, production_date
+                )
+                admin.add_movie(new_movie, movies)
+                
+            
+        elif choice == "2":
+            title = input("Enter the title of the movie to remove: ")
+            admin.remove_movie(title, movies)
+
+        elif choice == "3":
+            if not movies:
+                print("📭 No movies available.")
+            else:
+                Movie.display_movies_table(movies)
+
+        elif choice == "0":
+            print("Logging out...")
+            break
+        else:
+            print("❌ Invalid choice. Try again.")
 
 
 

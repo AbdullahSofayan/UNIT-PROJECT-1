@@ -1,1 +1,1 @@
-view_watchlist
+login_user

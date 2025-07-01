@@ -22,29 +22,8 @@
     "role": "user",
     "watch_list": [],
     "watched_movies": [
-      "The Godfather",
-      "Fury Road",
-      "Joker",
-      "John Wick"
+
     ]
-  },
-  {
-    "username": "abdul",
-    "password": "155",
-    "name": "abdullah",
-    "email": "dd@gmail.com",
-    "role": "admin",
-    "watch_list": [],
-    "watched_movies": []
-  },
-  {
-    "username": "lal",
-    "password": "44",
-    "name": "j",
-    "email": "adjfhak@gmmg.com",
-    "role": "admin",
-    "watch_list": [],
-    "watched_movies": []
   },
   {
     "username": "khalid",
@@ -52,15 +31,9 @@
     "name": "khalid",
     "email": "khalid@hotmail.com",
     "role": "user",
-    "watch_list": [
-      "Fury Road"
-    ],
+    "watch_list": [],
     "watched_movies": [
-      "Joker",
-      "Endgame",
-      "Inception",
-      "Fury Road",
-      "Interstellar"
+      "Joker"
     ]
   },
   {
@@ -69,23 +42,11 @@
     "name": "waleed",
     "email": "ww@gmail.com",
     "role": "user",
-    "watch_list": [
-      "John Wick"
-    ],
-    "watched_movies": [
-      "Joker"
-    ]
-  },
-  {
-    "username": "lolo",
-    "password": "123",
-    "name": "loloah",
-    "email": "loloah@gmail.com",
-    "role": "user",
     "watch_list": [],
     "watched_movies": [
       "Joker",
-      "John Wick"
+      "John Wick",
+      "Fury Road"
     ]
   },
   {
@@ -94,8 +55,13 @@
     "name": "kalid",
     "email": "kalid@gmail.com",
     "role": "user",
-    "watch_list": [],
-    "watched_movies": []
+    "watch_list": [
+      "John Wick",
+      "Fury Road"
+    ],
+    "watched_movies": [
+      "Joker"
+    ]
   },
   {
     "username": "aoao",
@@ -108,5 +74,12 @@
       "John Wick",
       "Fury Road"
     ]
+  },
+  {
+    "username": "saad",
+    "password": "1122",
+    "name": "saad",
+    "email": "adjfhak@gmmg.com",
+    "role": "admin"
   }
 ]

@@ -5,7 +5,7 @@ class Admin (User):
     def __init__(self, username, password, name):
         super().__init__(username, password, name, role = "admin")
     
-    def add_movies(self, movie, movie_list):
+    def add_movie(self, movie, movie_list):
         movie_list.append(movie)
         save_movies(movie_list)
         print(f"✅ Movie '{movie.title}' added successfully.")
@@ -16,8 +16,7 @@ class Admin (User):
                 movie_list.remove(movie)
                 save_movies(movie_list)
                 print(f"🗑️ Movie '{title}' removed successfully.")
-                break
+                return
+        print(f"❌ Movie '{title}' not found.")
 
-    def edit_movie(self, movie, updated_movie, movie_list):
-        for i, m in enumerate(movie_list):
-            pass
+   

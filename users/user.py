@@ -1,8 +1,10 @@
+import random
 from typing import Counter
 from movie import Movie
 from datetime import datetime, timedelta
 from utils.file_handler import save_json, load_json
 from movies_db import load_movies, save_movies
+from collections import Counter
 
 class User:
 
@@ -13,8 +15,7 @@ class User:
         self.role = role
         self.watch_list = []
         self.watched_movies = []
-        self.rated_movies = [] #To prevent rating the same movie more than one
-        self.current_plan = None
+        
 
 
     def find_movie_by_title(self, title):
@@ -33,19 +34,24 @@ class User:
             print("📭 Your watchlist is currently empty.")
             return False
         
-        for movie in self.watch_list:
-            movie.display_movie()
+        Movie.display_movies_table(self.watch_list)
             
         return True
 
     def view_watched_movies(self):
+        all_movies = load_movies()
+        users = load_json("users.json")
+        for user in users:
+            if user["username"] == self.username:
+                saved_titles = user.get("watched_movies", [])
+                self.watched_movies = [m for m in all_movies if m.title in saved_titles]
+                break
+
         if not self.watched_movies:
             print("📭 Your watched movies is currently empty.")
             return False
-        
-        for movie in self.watched_movies:
-            movie.display_movie()
-            
+
+        Movie.display_movies_table(self.watched_movies)
         return True
 
 
@@ -75,10 +81,11 @@ class User:
     
 
     def rate_movie(self, movie, rate): #return bool
-        if isinstance(movie, Movie) and movie not in self.rated_movies:
+        if isinstance(movie, Movie):
             movie.ratings.append(rate)
-            self.rated_movies.append(movie)
-             # Save updated ratings
+            
+            
+            # Save updated ratings
             all_movies = load_movies()
             for m in all_movies:
                 if m.title.lower() == movie.title.lower():
@@ -90,26 +97,88 @@ class User:
     
 
     # not sure yet
-    # def get_recommendation(self, movie_list): 
-    #     if not self.watched_movies:
-    #         return "❗ No watched movies found. Watch some movies to get recommendations."
 
-    #     # Count watched genres
-    #     genre_counts = Counter(m.genre.lower() for m in self.watched_movies)
-    #     most_common = genre_counts.most_common(1)
+    import random
 
-    #     if not most_common:
-    #         return "❗ No genre preferences found."
+    import random
 
-    #     top_genre = most_common[0][0]
-    #     # Recommend movies of that genre not already watched
-    #     recommendations = [m for m in movie_list if m.genre.lower() == top_genre and m not in self.watched_movies]
+    def get_recommendation(self):
+        all_movies = load_movies()
+        watched_titles = {movie.title.lower() for movie in self.watched_movies}
 
-    #     if recommendations:
-    #         return f"🎯 Based on your watched history, we recommend these {top_genre.title()} movies:\n" + \
-    #             "\n".join(f"- {m.title}" for m in recommendations)
-    #     else:
-    #         return f"🎯 You have watched all movies in your favorite genre: {top_genre.title()}!"
+        # No watched movies -> suggest 6 random movies
+        if not self.watched_movies:
+            print("🎯 You haven’t watched any movies yet. Here are some suggestions:\n")
+            suggestions = [m for m in all_movies if m.title.lower() not in watched_titles]
+            Movie.display_movies_table(random.sample(suggestions, min(6, len(suggestions))))
+            return ""
+
+        # Count watched genres
+        genre_counts = Counter(movie.genre.lower() for movie in self.watched_movies)
+        if not genre_counts:
+            
+            suggestions = [m for m in all_movies if m.title.lower() not in watched_titles]
+            print("🎯 No genre preference found. Here are some suggestions:\n")
+            Movie.display_movies_table(random.sample(suggestions, min(6, len(suggestions))))
+            return ""
+
+        # Get all genres with max count
+        max_count = max(genre_counts.values())
+        top_genres = [genre for genre, count in genre_counts.items() if count == max_count]
+
+        # Recommend movies from those genres (excluding watched)
+        recommendations = [
+            m for m in all_movies
+            if m.genre.lower() in top_genres and m.title.lower() not in watched_titles
+        ]
+
+        if recommendations:
+            genre_names = ", ".join(g.title() for g in top_genres)
+            print(f"🎯 Based on your watched history, we recommend these {genre_names} movies:\n")
+            Movie.display_movies_table(recommendations)
+
+        else:
+            # If no unwatched from top genres, fall back to random
+            suggestions = [m for m in all_movies if m.title.lower() not in watched_titles]
+            print("🎯 You've watched all movies in your favorite genres. Here are some random picks:\n")
+            Movie.display_movies_table(random.sample(suggestions, min(6, len(suggestions))))
+
+        return ""
+
+
+
+    def plan_movie_night(self):
+        print("\n🍿 Let's plan your movie night!")
+
+        # Ask for available time
+        try:
+            time_limit = int(input("⏱️ How many minutes do you have for the movie night?: "))
+        except ValueError:
+            print("⚠️ Please enter a valid number.")
+            return
+
+        # Ask for preferred genre
+        genre_pref = input("🎭 What genre are you in the mood for? (or type 'any'): ").lower()
+
+        # Load all movies and filter
+        all_movies = load_movies()
+        suggestions = []
+
+        for movie in all_movies:
+            if movie.duration <= time_limit:
+                if genre_pref == 'any' or genre_pref in movie.genre.lower():
+                    if not self.is_exist_in_watched_movies(movie):
+                        suggestions.append(movie)
+
+        # Show results
+        if suggestions:
+            print("\n🎬 Here are some movies you can watch tonight:\n")
+            Movie.display_movies_table(suggestions[:6])  # Show up to 6 suggestions
+        else:
+            print("❗ Sorry, no suitable movies found for your movie night.")
+
+
+
 
     
     def save_watch_list(self):
