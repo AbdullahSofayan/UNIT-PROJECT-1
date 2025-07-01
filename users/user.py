@@ -2,7 +2,7 @@ from typing import Counter
 from movie import Movie
 from datetime import datetime, timedelta
 from utils.file_handler import save_json, load_json
-from movies_db import load_movies
+from movies_db import load_movies, save_movies
 
 class User:
 
@@ -32,25 +32,29 @@ class User:
         if not self.watch_list:
             print("📭 Your watchlist is currently empty.")
             return False
-        print("-" * 40)
+        
         for movie in self.watch_list:
-            print(f"🎞️  Title: {movie.title}")
-            print(f"📚 Genre: {movie.genre}")
-            print(f"⏱ Duration: {movie.duration} minutes")
-            print(f"🔞 Age: {movie.age_classification}+")
-            print(f"📺 Where to Watch: {movie.where_to_watch}")
-            print(f"📆 Production Date: {movie.production_date}")
-            print("-" * 40)
+            movie.display_movie()
+            
+        return True
+
+    def view_watched_movies(self):
+        if not self.watched_movies:
+            print("📭 Your watched movies is currently empty.")
+            return False
+        
+        for movie in self.watched_movies:
+            movie.display_movie()
             
         return True
 
 
 
-
-    def remove_from_watchlist(self, movie): #return bool
-        for m in self.watch_list:
+    def remove_from_list(self, movie,list): #return bool
+        
+        for m in list:
             if m.title.lower() == movie.title.lower():
-                self.watch_list.remove(m)
+                list.remove(m)
                 return True
         return False
     
@@ -62,12 +66,25 @@ class User:
                 return True
         return False
     
+    def remove_from_watched_movies(self, movie): #return bool
+        for m in self.watched_movies:
+            if m.title.lower() == movie.title.lower():
+                self.watched_movies.remove(m)
+                return True
+        return False
     
 
     def rate_movie(self, movie, rate): #return bool
         if isinstance(movie, Movie) and movie not in self.rated_movies:
             movie.ratings.append(rate)
             self.rated_movies.append(movie)
+             # Save updated ratings
+            all_movies = load_movies()
+            for m in all_movies:
+                if m.title.lower() == movie.title.lower():
+                    m.ratings = movie.ratings
+                    break
+            save_movies(all_movies)
             return True
         return False
     
@@ -125,12 +142,10 @@ class User:
 
         for user in users:
             if user["username"] == self.username:
-                existing_movies = user.get("watched_movies", [])
-
-                new_movies = [m.title for m in self.watched_movies if m.title not in existing_movies]
-                user["watched_movies"] = existing_movies + new_movies
-                
+                user["watched_movies"] = [m.title for m in self.watched_movies]
                 break
+                
+                
 
         save_json("users.json", users)
 

@@ -23,7 +23,9 @@
     "watch_list": [],
     "watched_movies": [
       "The Godfather",
-      "Fury Road"
+      "Fury Road",
+      "Joker",
+      "John Wick"
     ]
   },
   {
@@ -50,7 +52,9 @@
     "name": "khalid",
     "email": "khalid@hotmail.com",
     "role": "user",
-    "watch_list": [],
+    "watch_list": [
+      "Fury Road"
+    ],
     "watched_movies": [
       "Joker",
       "Endgame",
@@ -65,8 +69,12 @@
     "name": "waleed",
     "email": "ww@gmail.com",
     "role": "user",
-    "watch_list": [],
-    "watched_movies": []
+    "watch_list": [
+      "John Wick"
+    ],
+    "watched_movies": [
+      "Joker"
+    ]
   },
   {
     "username": "lolo",
@@ -75,7 +83,10 @@
     "email": "loloah@gmail.com",
     "role": "user",
     "watch_list": [],
-    "watched_movies": []
+    "watched_movies": [
+      "Joker",
+      "John Wick"
+    ]
   },
   {
     "username": "kal",
@@ -83,9 +94,19 @@
     "name": "kalid",
     "email": "kalid@gmail.com",
     "role": "user",
-    "watch_list": [
-      "Joker"
-    ],
+    "watch_list": [],
     "watched_movies": []
+  },
+  {
+    "username": "aoao",
+    "password": "11",
+    "name": "ao",
+    "email": "ao@gmail.com",
+    "role": "user",
+    "watch_list": [],
+    "watched_movies": [
+      "John Wick",
+      "Fury Road"
+    ]
   }
 ]
